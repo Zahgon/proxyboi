@@ -1,30 +1,70 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
 
 jobs:
-  ci:
-    name: ${{ matrix.os }}
+  test:
+    name: Test on ${{ matrix.os }} with Node ${{ matrix.node }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [20, 22, 24]
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
 
-      - name: cargo build
-        run: cargo build
+      - name: Install dependencies
+        run: npm ci
 
-      - name: cargo test
-        run: cargo test
+      - name: Run tests
+        run: npm test
 
-      - name: cargo fmt
-        run: cargo fmt --all -- --check
+  lint:
+    name: Lint and format check
+    runs-on: ubuntu-latest
 
-      - name: cargo clippy
-        run: cargo clippy -- -D warnings
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check formatting and lints
+        run: npx biome ci .
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck with tsc
+        run: npm run typecheck

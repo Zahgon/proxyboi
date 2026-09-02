@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 <!-- next-header -->
 
 ## [Unreleased] - ReleaseDate
+- Ported the entire codebase from Rust to JavaScript (Node.js >= 20, ESM).
+  The port is behaviour-compatible with the Rust implementation: the CLI
+  surface, log output, header rewriting, body limits and error responses were
+  all verified byte-for-byte against the original binary.
+  See `PORTING_NOTES.md` for the handful of documented deviations.
+- Dropped all runtime dependencies. The proxy now runs on the Node standard
+  library alone (`node:http`, `node:https`, `node:cluster`).
+- Argument values are now validated as they are parsed, so `-l nonsense` or
+  `--timeout abc` reports the offending value instead of an unrelated
+  "required arguments were not provided" error.
+- Repeating a single-value argument (`-v -v`, `--timeout=5 --timeout=6`, ...)
+  is now rejected with clap's "cannot be used multiple times" error. Only
+  `--upstream-header` and `--response-header` accept repetition.
+- Mistyped long flags now get clap's "a similar argument exists" suggestion,
+  ranked with the same Jaro-Winkler scoring the original uses.
 
 ## [0.5.0] - 2021-05-30
 - Upgraded to actix-web 3

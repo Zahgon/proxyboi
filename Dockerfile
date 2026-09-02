@@ -1,15 +1,14 @@
-FROM rustlang/rust:nightly as builder
+FROM node:22-alpine
 
-ENV APP_HOME /usr/src/app/
+WORKDIR /app
 
-RUN rustup target add x86_64-unknown-linux-musl
-RUN apt-get update && apt-get install -y upx musl-tools
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev && npm cache clean --force
 
-COPY . $APP_HOME
-WORKDIR $APP_HOME
-RUN make build-linux
+COPY bin ./bin
+COPY src ./src
+COPY LICENSE README.md CHANGELOG.md ./
 
-FROM scratch
-COPY --from=builder /usr/src/app/target/x86_64-unknown-linux-musl/release/proxyboi /app/
+EXPOSE 8080
 
-ENTRYPOINT ["/app/proxyboi"]
+ENTRYPOINT ["node", "/app/bin/proxyboi.js"]

@@ -1,0 +1,56 @@
+{
+	"name": "proxyboi",
+	"version": "0.5.1-alpha.0",
+	"description": "A super simple reverse proxy with TLS support",
+	"keywords": [
+		"reverse-proxy",
+		"proxy",
+		"https",
+		"ssl",
+		"tls"
+	],
+	"license": "MIT",
+	"author": "Sven-Hendrik Haase <svenstaro@gmail.com>",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/svenstaro/proxyboi.git"
+	},
+	"homepage": "https://github.com/svenstaro/proxyboi",
+	"bugs": {
+		"url": "https://github.com/svenstaro/proxyboi/issues"
+	},
+	"type": "module",
+	"engines": {
+		"node": ">=20.0.0"
+	},
+	"bin": {
+		"proxyboi": "bin/proxyboi.js"
+	},
+	"main": "./src/index.js",
+	"exports": {
+		".": "./src/index.js"
+	},
+	"files": [
+		"bin",
+		"src",
+		"README.md",
+		"CHANGELOG.md",
+		"LICENSE"
+	],
+	"scripts": {
+		"start": "node bin/proxyboi.js",
+		"test": "node --test",
+		"lint": "biome check .",
+		"format": "biome format --write .",
+		"typecheck": "tsc --noEmit -p tsconfig.json",
+		"version": "node scripts/release.mjs && git add -A ."
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@types/node": "^22.20.1",
+		"typescript": "^5.9.3"
+	},
+	"allowScripts": {
+		"@biomejs/biome@1.9.4": true
+	}
+}
